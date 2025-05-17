@@ -8,10 +8,10 @@ import androidx.room.RoomDatabase
 /**
  * Database class with a singleton Instance object.
  */
-@Database(entities = [Item::class], version = 1, exportSchema = false)
+@Database(entities = [Note::class], version = 1, exportSchema = false)
 abstract class DairyDatabase : RoomDatabase() {
 
-    abstract fun itemDao(): ItemDao
+    abstract fun noteDao(): NoteDao
 
     companion object {
         @Volatile
@@ -20,7 +20,7 @@ abstract class DairyDatabase : RoomDatabase() {
         fun getDatabase(context: Context): DairyDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, DairyDatabase::class.java, "item_database")
+                Room.databaseBuilder(context, DairyDatabase::class.java, "note_database")
                     .build()
                     .also { Instance = it }
             }

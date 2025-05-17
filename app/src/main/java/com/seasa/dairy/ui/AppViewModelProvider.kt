@@ -24,38 +24,36 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.seasa.dairy.DairyApplication
 import com.seasa.dairy.ui.home.HomeViewModel
-import com.seasa.dairy.ui.item.ItemDetailsViewModel
-import com.seasa.dairy.ui.item.ItemEditViewModel
-import com.seasa.dairy.ui.item.ItemEntryViewModel
+import com.seasa.dairy.ui.note.NoteEditViewModel
+import com.seasa.dairy.ui.note.NoteEntryViewModel
+import com.seasa.dairy.ui.note.NoteDetailsViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Dairy app
  */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
-        // Initializer for ItemEditViewModel
-        initializer {
-            ItemEditViewModel(
-                this.createSavedStateHandle(),
-                inventoryApplication().container.itemsRepository
-            )
-        }
         // Initializer for ItemEntryViewModel
         initializer {
-            ItemEntryViewModel(inventoryApplication().container.itemsRepository)
+            NoteEntryViewModel(dairyApplication().container.notesRepository)
         }
-
-        // Initializer for ItemDetailsViewModel
+        // Initializer for ItemEditViewModel
         initializer {
-            ItemDetailsViewModel(
+            NoteEditViewModel(
                 this.createSavedStateHandle(),
-                inventoryApplication().container.itemsRepository
+                dairyApplication().container.notesRepository
             )
         }
-
+        // Initializer for ItemDetailsViewModel
+        initializer {
+            NoteDetailsViewModel(
+                this.createSavedStateHandle(),
+                dairyApplication().container.notesRepository
+            )
+        }
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(inventoryApplication().container.itemsRepository)
+            HomeViewModel(dairyApplication().container.notesRepository)
         }
     }
 }
@@ -64,5 +62,5 @@ object AppViewModelProvider {
  * Extension function to queries for [Application] object and returns an instance of
  * [DairyApplication].
  */
-fun CreationExtras.inventoryApplication(): DairyApplication =
+fun CreationExtras.dairyApplication(): DairyApplication =
     (this[AndroidViewModelFactory.APPLICATION_KEY] as DairyApplication)

@@ -14,62 +14,47 @@
  * limitations under the License.
  */
 
-package com.seasa.dairy.ui.item
+package com.seasa.dairy.ui.note
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seasa.dairy.data.ItemsRepository
+import com.seasa.dairy.data.NotesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
+import com.seasa.dairy.data.Note
 
 /**
- * ViewModel to retrieve, update and delete an item from the [ItemsRepository]'s data source.
+ * ViewModel to retrieve, update and delete an note from the [NotesRepository]'s data source.
  */
-class ItemDetailsViewModel(
+class NoteDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val itemsRepository: ItemsRepository
+    private val notesRepository: NotesRepository
 ) : ViewModel() {
 
-    private val itemId: Int = checkNotNull(savedStateHandle[ItemDetailsDestination.itemIdArg])
+    private val noteId: Int = checkNotNull(savedStateHandle[NoteDetailsDestination.noteIdArg])
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    val uiState: StateFlow<ItemDetailsUiState> =
-        itemsRepository.getItemStream(itemId)
+    val uiState: StateFlow<NoteUiState> =
+        notesRepository.getNoteStream(noteId)
             .filterNotNull()
             .map {
-                ItemDetailsUiState(outOfStock = it.quantity <= 0, itemDetails = it.toItemDetails())
+                NoteUiState(isEntryValid = true, noteDetail = it.toNoteDetail())
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = ItemDetailsUiState()
+                initialValue = NoteUiState()
             )
 
-    fun reduceQuantityByOne() {
-        viewModelScope.launch {
-            val currentItem = uiState.value.itemDetails.toItem()
-            if (currentItem.quantity > 0) {
-                itemsRepository.updateItem(currentItem.copy(quantity = currentItem.quantity - 1))
-            }
-        }
-    }
-
-    suspend fun deleteItem() {
-        itemsRepository.deleteItem(uiState.value.itemDetails.toItem())
+    suspend fun deleteNote() {
+        notesRepository.deleteNote(uiState.value.noteDetail.toNote())
     }
 }
-
-/**
- * UI state for ItemDetailsScreen
- */
-data class ItemDetailsUiState(
-    val outOfStock: Boolean = true,
-    val itemDetails: ItemDetails = ItemDetails()
-)

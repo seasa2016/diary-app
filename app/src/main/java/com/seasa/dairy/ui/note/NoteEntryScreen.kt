@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.seasa.dairy.ui.item
+package com.seasa.dairy.ui.note
 
+import android.icu.text.IDNA.Info
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -23,22 +26,27 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seasa.dairy.DairyTopAppBar
@@ -47,42 +55,45 @@ import com.seasa.dairy.ui.AppViewModelProvider
 import com.seasa.dairy.ui.navigation.NavigationDestination
 import com.seasa.dairy.ui.theme.DairyTheme
 import kotlinx.coroutines.launch
-import java.util.Currency
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
-object ItemEntryDestination : NavigationDestination {
-    override val route = "item_entry"
-    override val titleRes = R.string.item_entry_title
+object NoteEntryDestination : NavigationDestination {
+    override val route = "note_entry"
+    override val titleRes = R.string.note_entry_title
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemEntryScreen(
+fun NoteEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
-    viewModel: ItemEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: NoteEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             DairyTopAppBar(
-                title = stringResource(ItemEntryDestination.titleRes),
+                title = stringResource(NoteEntryDestination.titleRes),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp
             )
         }
     ) { innerPadding ->
-        ItemEntryBody(
-            itemUiState = viewModel.itemUiState,
-            onItemValueChange = viewModel::updateUiState,
+        NoteEntryBody(
+            noteUiState = viewModel.noteUiState,
+            onNoteValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.saveItem()
+                    viewModel.saveNote()
                     navigateBack()
                 }
             },
+            dateSelectEnabled = true,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -96,24 +107,30 @@ fun ItemEntryScreen(
 }
 
 @Composable
-fun ItemEntryBody(
-    itemUiState: ItemUiState,
-    onItemValueChange: (ItemDetails) -> Unit,
+fun NoteEntryBody(
+    noteUiState: NoteUiState,
+    onNoteValueChange: (NoteDetail) -> Unit,
     onSaveClick: () -> Unit,
+    dateSelectEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
     ) {
-        ItemInputForm(
-            itemDetails = itemUiState.itemDetails,
-            onValueChange = onItemValueChange,
+        DatePicker(
+            noteDetail = noteUiState.noteDetail,
+            onValueChange = onNoteValueChange,
+            enabled = dateSelectEnabled
+        )
+        NoteInputForm(
+            noteDetail = noteUiState.noteDetail,
+            onValueChange = onNoteValueChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
             onClick = onSaveClick,
-            enabled = itemUiState.isEntryValid,
+            enabled = noteUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -122,11 +139,66 @@ fun ItemEntryBody(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemInputForm(
-    itemDetails: ItemDetails,
+fun DatePicker(
+    noteDetail: NoteDetail,
+    onValueChange: (NoteDetail) -> Unit = {},
+    enabled: Boolean = true
+) {
+    val showDialog = remember { mutableStateOf(false) }
+
+    Column {
+        OutlinedTextField(
+            value = String.format(
+                Locale.US,
+                "%4d-%02d-%02d",
+                noteDetail.date / 10000,
+                (noteDetail.date / 100) % 100,
+                noteDetail.date % 100
+            ),
+            onValueChange = {
+
+            },
+            label = { Text(stringResource(R.string.date)) },
+            readOnly = true,
+            modifier = Modifier
+                .clickable { showDialog.value = true }
+                .fillMaxWidth(),
+            enabled = !enabled
+        )
+        Log.d("Info", String.format("showDialog: %b", showDialog.value))
+        if (showDialog.value) {
+            DatePickerDialog(
+                onDismissRequest = { showDialog.value = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = { showDialog.value = false }
+                    ) { Text(stringResource(R.string.confirm)) }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDialog.value = false }
+                    ) { Text(stringResource(R.string.cancel)) }
+                }
+            ) {
+                val datePickerState: DatePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = System.currentTimeMillis()
+                )
+                DatePicker(state = datePickerState)
+                onValueChange(noteDetail.copy(date = datePickerState.selectedDateMillis?.let { millis ->
+                    SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date(millis)).toInt()
+                } ?: 0))
+            }
+        }
+    }
+}
+
+@Composable
+fun NoteInputForm(
+    noteDetail: NoteDetail,
     modifier: Modifier = Modifier,
-    onValueChange: (ItemDetails) -> Unit = {},
+    onValueChange: (NoteDetail) -> Unit = {},
     enabled: Boolean = true
 ) {
     Column(
@@ -134,65 +206,42 @@ fun ItemInputForm(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ) {
         OutlinedTextField(
-            value = itemDetails.name,
-            onValueChange = { onValueChange(itemDetails.copy(name = it)) },
-            label = { Text(stringResource(R.string.item_name_req)) },
+            value = noteDetail.title,
+            onValueChange = { onValueChange(noteDetail.copy(title = it)) },
+            label = { Text(stringResource(R.string.note_title)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
             modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+            enabled = enabled
         )
         OutlinedTextField(
-            value = itemDetails.price,
-            onValueChange = { onValueChange(itemDetails.copy(price = it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            label = { Text(stringResource(R.string.item_price_req)) },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-            leadingIcon = { Text(Currency.getInstance(Locale.getDefault()).symbol) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
-        )
-        OutlinedTextField(
-            value = itemDetails.quantity,
-            onValueChange = { onValueChange(itemDetails.copy(quantity = it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text(stringResource(R.string.quantity_req)) },
+            value = noteDetail.content,
+            onValueChange = { onValueChange(noteDetail.copy(content = it)) },
+            label = { Text(stringResource(R.string.note_content)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
             modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+            enabled = enabled
         )
-        if (enabled) {
-            Text(
-                text = stringResource(R.string.required_fields),
-                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium))
-            )
-        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ItemEntryScreenPreview() {
+private fun NoteEntryScreenPreview() {
     DairyTheme {
-        ItemEntryBody(
-            itemUiState = ItemUiState(
-            ItemDetails(
-                name = "Item name", price = "10.00", quantity = "5"
-            )
-        ), onItemValueChange = {}, onSaveClick = {})
+        NoteEntryBody(
+            noteUiState = NoteUiState(
+                NoteDetail(
+                    date = 20250401, content = "hello world"
+                )
+            ), onNoteValueChange = {}, onSaveClick = {}, dateSelectEnabled = true
+        )
     }
 }

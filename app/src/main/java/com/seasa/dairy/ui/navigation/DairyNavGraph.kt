@@ -25,12 +25,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.seasa.dairy.ui.home.HomeDestination
 import com.seasa.dairy.ui.home.HomeScreen
-import com.seasa.dairy.ui.item.ItemDetailsDestination
-import com.seasa.dairy.ui.item.ItemDetailsScreen
-import com.seasa.dairy.ui.item.ItemEditDestination
-import com.seasa.dairy.ui.item.ItemEditScreen
-import com.seasa.dairy.ui.item.ItemEntryDestination
-import com.seasa.dairy.ui.item.ItemEntryScreen
+import com.seasa.dairy.ui.note.NoteDetailsDestination
+import com.seasa.dairy.ui.note.NoteDetailsScreen
+import com.seasa.dairy.ui.note.NoteEditDestination
+import com.seasa.dairy.ui.note.NoteEditScreen
+import com.seasa.dairy.ui.note.NoteEntryDestination
+import com.seasa.dairy.ui.note.NoteEntryScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -47,36 +47,36 @@ fun DairyNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToItemEntry = { navController.navigate(ItemEntryDestination.route) },
+                navigateToItemEntry = { navController.navigate(NoteEntryDestination.route) },
                 navigateToItemUpdate = {
-                    navController.navigate("${ItemDetailsDestination.route}/${it}")
+                    navController.navigate("${NoteDetailsDestination.route}/${it}")
                 }
             )
         }
-        composable(route = ItemEntryDestination.route) {
-            ItemEntryScreen(
+        composable(route = NoteEntryDestination.route) {
+            NoteEntryScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )
         }
         composable(
-            route = ItemDetailsDestination.routeWithArgs,
-            arguments = listOf(navArgument(ItemDetailsDestination.itemIdArg) {
+            route = NoteDetailsDestination.routeWithArgs,
+            arguments = listOf(navArgument(NoteDetailsDestination.noteIdArg) {
                 type = NavType.IntType
             })
         ) {
-            ItemDetailsScreen(
-                navigateToEditItem = { navController.navigate("${ItemEditDestination.route}/$it") },
+            NoteDetailsScreen(
+                navigateToEditNote = { navController.navigate("${NoteEditDestination.route}/$it") },
                 navigateBack = { navController.navigateUp() }
             )
         }
         composable(
-            route = ItemEditDestination.routeWithArgs,
-            arguments = listOf(navArgument(ItemEditDestination.itemIdArg) {
+            route = NoteEditDestination.routeWithArgs,
+            arguments = listOf(navArgument(NoteEditDestination.noteIdArg) {
                 type = NavType.IntType
             })
         ) {
-            ItemEditScreen(
+            NoteEditScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )

@@ -18,8 +18,8 @@ package com.seasa.dairy.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seasa.dairy.data.Item
-import com.seasa.dairy.data.ItemsRepository
+import com.seasa.dairy.data.NoteBrief
+import com.seasa.dairy.data.NotesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -28,12 +28,12 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel to retrieve all items in the Room database.
  */
-class HomeViewModel(itemsRepository: ItemsRepository) : ViewModel() {
+class HomeViewModel(notesRepository: NotesRepository) : ViewModel() {
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
     val homeUiState: StateFlow<HomeUiState> =
-        itemsRepository.getAllItemsStream().map { HomeUiState(it) }
+        notesRepository.getAllNoteBriefs().map { HomeUiState(it) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -46,4 +46,4 @@ class HomeViewModel(itemsRepository: ItemsRepository) : ViewModel() {
 /**
  * Ui State for HomeScreen
  */
-data class HomeUiState(val itemList: List<Item> = listOf())
+data class HomeUiState(val noteList: List<NoteBrief> = listOf())

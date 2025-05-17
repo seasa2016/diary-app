@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.seasa.dairy.ui.item
+package com.seasa.dairy.ui.note
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -37,40 +37,41 @@ import com.seasa.dairy.ui.navigation.NavigationDestination
 import com.seasa.dairy.ui.theme.DairyTheme
 import kotlinx.coroutines.launch
 
-object ItemEditDestination : NavigationDestination {
-    override val route = "item_edit"
-    override val titleRes = R.string.edit_item_title
-    const val itemIdArg = "itemId"
-    val routeWithArgs = "$route/{$itemIdArg}"
+object NoteEditDestination : NavigationDestination {
+    override val route = "note_edit"
+    override val titleRes = R.string.edit_note_title
+    const val noteIdArg = "noteId"
+    val routeWithArgs = "$route/{$noteIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemEditScreen(
+fun NoteEditScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ItemEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             DairyTopAppBar(
-                title = stringResource(ItemEditDestination.titleRes),
+                title = stringResource(NoteEditDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = onNavigateUp
             )
         },
         modifier = modifier
     ) { innerPadding ->
-        ItemEntryBody(
-            itemUiState = viewModel.itemUiState,
-            onItemValueChange = viewModel::updateUiState,
+        NoteEntryBody(
+            noteUiState = viewModel.noteUiState,
+            onNoteValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.updateItem()
+                    viewModel.updateNote()
                     navigateBack()
                 } },
+            dateSelectEnabled = false,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -84,8 +85,8 @@ fun ItemEditScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun ItemEditScreenPreview() {
+fun NoteEditScreenPreview() {
     DairyTheme {
-        ItemEditScreen(navigateBack = { /*Do nothing*/ }, onNavigateUp = { /*Do nothing*/ })
+        NoteEditScreen(navigateBack = { /*Do nothing*/ }, onNavigateUp = { /*Do nothing*/ })
     }
 }

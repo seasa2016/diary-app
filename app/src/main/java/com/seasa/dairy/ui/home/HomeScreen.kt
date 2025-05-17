@@ -39,6 +39,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -50,13 +52,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seasa.dairy.DairyTopAppBar
 import com.seasa.dairy.R
-import com.seasa.dairy.data.Item
+import com.seasa.dairy.data.NoteBrief
 import com.seasa.dairy.ui.AppViewModelProvider
-import com.seasa.dairy.ui.item.formatedPrice
 import com.seasa.dairy.ui.navigation.NavigationDestination
 import com.seasa.dairy.ui.theme.DairyTheme
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import java.util.Locale
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -94,13 +94,13 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.item_entry_title)
+                    contentDescription = stringResource(R.string.note_entry_title)
                 )
             }
         },
     ) { innerPadding ->
         HomeBody(
-            itemList = homeUiState.itemList,
+            noteList = homeUiState.noteList,
             onItemClick = navigateToItemUpdate,
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding,
@@ -110,7 +110,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeBody(
-    itemList: List<Item>,
+    noteList: List<NoteBrief>,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -119,16 +119,16 @@ private fun HomeBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
-        if (itemList.isEmpty()) {
+        if (noteList.isEmpty()) {
             Text(
-                text = stringResource(R.string.no_item_description),
+                text = stringResource(R.string.no_note_description),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
             DairyList(
-                itemList = itemList,
+                noteList = noteList,
                 onItemClick = { onItemClick(it.id) },
                 contentPadding = contentPadding,
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
@@ -139,8 +139,8 @@ private fun HomeBody(
 
 @Composable
 private fun DairyList(
-    itemList: List<Item>,
-    onItemClick: (Item) -> Unit,
+    noteList: List<NoteBrief>,
+    onItemClick: (NoteBrief) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -148,8 +148,8 @@ private fun DairyList(
         modifier = modifier,
         contentPadding = contentPadding
     ) {
-        items(items = itemList, key = { it.id }) { item ->
-            DairyItem(item = item,
+        items(items = noteList, key = { it.id }) { item ->
+            DairyItem(note = item,
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
                     .clickable { onItemClick(item) })
@@ -159,7 +159,7 @@ private fun DairyList(
 
 @Composable
 private fun DairyItem(
-    item: Item, modifier: Modifier = Modifier
+    note: NoteBrief, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier,
@@ -173,29 +173,26 @@ private fun DairyItem(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = item.name,
+                    text = String.format(Locale.US, "%4d-%02d-%02d", note.date/10000, (note.date/100)%100, note.date%100),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = item.formatedPrice(),
-                    style = MaterialTheme.typography.titleMedium
+                    text = note.title,
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
-            Text(
-                text = stringResource(R.string.in_stock, item.quantity),
-                style = MaterialTheme.typography.titleMedium
-            )
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyPreview() {
     DairyTheme {
         HomeBody(listOf(
-            Item(1, "Game", 100.0, 20), Item(2, "Pen", 200.0, 30), Item(3, "TV", 300.0, 50)
+            NoteBrief(1, 20250401, "1"), NoteBrief(2, 20250402, "2"), NoteBrief(3, 20250403, "3")
         ), onItemClick = {})
     }
 }
@@ -213,7 +210,7 @@ fun HomeBodyEmptyListPreview() {
 fun DairyItemPreview() {
     DairyTheme {
         DairyItem(
-            Item(1, "Game", 100.0, 20),
+            NoteBrief(1, 20250401, "1"),
         )
     }
 }

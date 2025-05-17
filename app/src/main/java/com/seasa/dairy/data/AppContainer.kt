@@ -22,17 +22,17 @@ import android.content.Context
  * App container for Dependency injection.
  */
 interface AppContainer {
-    val itemsRepository: ItemsRepository
+    val notesRepository: NotesRepository
 }
 
 /**
- * [AppContainer] implementation that provides instance of [OfflineItemsRepository]
+ * [AppContainer] implementation that provides instance of [OfflineNotesRepository]
  */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
-     * Implementation for [ItemsRepository]
+     * Implementation for [NotesRepository]
      */
-    override val itemsRepository: ItemsRepository by lazy {
-        OfflineItemsRepository(DairyDatabase.getDatabase(context).itemDao())
+    override val notesRepository: NotesRepository by lazy {
+        OfflineNotesRepository(DairyDatabase.getDatabase(context).noteDao())
     }
 }

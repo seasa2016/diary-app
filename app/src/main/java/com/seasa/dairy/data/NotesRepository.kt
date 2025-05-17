@@ -19,31 +19,31 @@ package com.seasa.dairy.data
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Repository that provides insert, update, delete, and retrieve of [Item] from a given data source.
+ * Repository that provides insert, update, delete, and retrieve of [Note] from a given data source.
  */
-interface ItemsRepository {
+interface NotesRepository {
     /**
-     * Retrieve all the items from the the given data source.
+     * Retrieve all the notes from the the given data source.
      */
-    fun getAllItemsStream(): Flow<List<Item>>
+    fun getAllNoteBriefs(): Flow<List<NoteBrief>>
 
     /**
-     * Retrieve an item from the given data source that matches with the [id].
+     * Retrieve an note from the given data source that matches with the [id].
      */
-    fun getItemStream(id: Int): Flow<Item?>
+    fun getNoteStream(id: Int): Flow<Note?>
 
     /**
-     * Insert item in the data source
+     * Insert note in the data source
      */
-    suspend fun insertItem(item: Item)
+    suspend fun insertNote(note: Note)
 
     /**
-     * Delete item from the data source
+     * Delete note from the data source
      */
-    suspend fun deleteItem(item: Item)
+    suspend fun deleteNote(note: Note)
 
     /**
-     * Update item in the data source
+     * Update note in the data source
      */
-    suspend fun updateItem(item: Item)
+    suspend fun updateNote(note: Note)
 }
