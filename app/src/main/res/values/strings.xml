@@ -15,6 +15,7 @@
   -->
 <resources>
     <string name="app_name">Dairy</string>
+    <string name="setting_title">Setting</string>
     <string name="attention">Attention</string>
     <string name="back_button">Back</string>
     <string name="delete">Delete</string>
@@ -27,12 +28,10 @@
     <string name="note_title">Title</string>
     <string name="note_content">Content</string>
     <string name="no">No</string>
-    <string name="price">Price</string>
     <string name="quantity_in_stock">Quantity in stock</string>
     <string name="in_stock">%d in stock</string>
     <string name="quantity_req">Quantity in Stock*</string>
     <string name="save_action">Save</string>
-    <string name="sell">Sell</string>
     <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
     <string name="date">Date</string>

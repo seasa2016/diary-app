@@ -31,6 +31,8 @@ import com.seasa.dairy.ui.note.NoteEditDestination
 import com.seasa.dairy.ui.note.NoteEditScreen
 import com.seasa.dairy.ui.note.NoteEntryDestination
 import com.seasa.dairy.ui.note.NoteEntryScreen
+import com.seasa.dairy.ui.setting.SettingDestination
+import com.seasa.dairy.ui.setting.SettingScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -79,6 +81,12 @@ fun DairyNavHost(
             NoteEditScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = SettingDestination.route,
+        ) {
+            SettingScreen(
             )
         }
     }
