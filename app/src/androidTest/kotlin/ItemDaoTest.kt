@@ -5,7 +5,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.seasa.dairy.data.DairyDatabase
-import com.seasa.dairy.data.Item
+import com.seasa.dairy.data.Note
+import com.seasa.dairy.data.NoteBrief
 import com.seasa.dairy.data.NoteDao
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -17,8 +18,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 
-private var item1 = Item(1, "Apples", 10.0, 20)
-private var item2 = Item(2, "Bananas", 15.0, 97)
+private var note1 = Note(1, 20250101, "title1", "content1")
+private var note2 = Note(2, 20250102, "title2", "content2")
+private var noteBrief1 = NoteBrief(1, 20250101, "title1")
+private var noteBrief2 = NoteBrief(2, 20250102, "title2")
 
 @RunWith(AndroidJUnit4::class)
 class NoteDaoTest {
@@ -43,59 +46,59 @@ class NoteDaoTest {
         dairyDatabase.close()
     }
 
-    private suspend fun addOneItemToDb() {
-        noteDao.insert(item1)
+    private suspend fun addOneNoteToDb() {
+        noteDao.insert(note1)
     }
 
-    private suspend fun addTwoItemsToDb() {
-        noteDao.insert(item1)
-        noteDao.insert(item2)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun daoInsert_insertsItemIntoDB() = runBlocking {
-        addOneItemToDb()
-        val allItems = noteDao.getAllItems().first()
-        assertEquals(allItems[0], item1)
+    private suspend fun addTwoNotesToDb() {
+        noteDao.insert(note1)
+        noteDao.insert(note2)
     }
 
     @Test
     @Throws(Exception::class)
-    fun daoGetAllItems_returnsAllItemsFromDB() = runBlocking {
-        addTwoItemsToDb()
-        val allItems = noteDao.getAllItems().first()
-        assertEquals(allItems[0], item1)
-        assertEquals(allItems[1], item2)
+    fun daoInsert_insertsNoteIntoDB() = runBlocking {
+        addOneNoteToDb()
+        val allNotes = noteDao.getAllNoteBriefs().first()
+        assertEquals(allNotes[0], noteBrief1)
     }
 
     @Test
     @Throws(Exception::class)
-    fun daoUpdateItems_updatesItemsInDB() = runBlocking {
-        addTwoItemsToDb()
-        noteDao.update(Item(1, "Apples", 15.0, 25))
-        noteDao.update(Item(2, "Bananas", 5.0, 50))
-
-        val allItems = noteDao.getAllItems().first()
-        assertEquals(allItems[0], Item(1, "Apples", 15.0, 25))
-        assertEquals(allItems[1], Item(2, "Bananas", 5.0, 50))
+    fun daoGetAllNotes_returnsAllNotesFromDB() = runBlocking {
+        addTwoNotesToDb()
+        val allNotes = noteDao.getAllNoteBriefs().first()
+        assertEquals(allNotes[0], noteBrief1)
+        assertEquals(allNotes[1], noteBrief2)
     }
 
     @Test
     @Throws(Exception::class)
-    fun daoDeleteItems_deletesAllItemsFromDB() = runBlocking {
-        addTwoItemsToDb()
-        noteDao.delete(item1)
-        noteDao.delete(item2)
-        val allItems = noteDao.getAllItems().first()
-        assertTrue(allItems.isEmpty())
+    fun daoUpdateNotes_updatesNotesInDB() = runBlocking {
+        addTwoNotesToDb()
+        noteDao.update(Note(1, 20250201, title = "titleNew1", content = "contentNew1"))
+        noteDao.update(Note(2, 20250202, title = "titleNew2", content = "contentNew2"))
+
+        val allNotes = noteDao.getAllNoteBriefs().first()
+        assertEquals(allNotes[0], NoteBrief(1, 20250201, title = "titleNew1"))
+        assertEquals(allNotes[1], NoteBrief(2, 20250202, title = "titleNew2"))
     }
 
     @Test
     @Throws(Exception::class)
-    fun daoGetItem_returnsItemFromDB() = runBlocking {
-        addOneItemToDb()
-        val item = noteDao.getItem(1)
-        assertEquals(item.first(), item1)
+    fun daoDeleteNotes_deletesAllNotesFromDB() = runBlocking {
+        addTwoNotesToDb()
+        noteDao.delete(note1)
+        noteDao.delete(note2)
+        val allNotes = noteDao.getAllNoteBriefs().first()
+        assertTrue(allNotes.isEmpty())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun daoGetNote_returnsNoteFromDB() = runBlocking {
+        addOneNoteToDb()
+        val note = noteDao.getNote(1)
+        assertEquals(note.first(), note1)
     }
 }
