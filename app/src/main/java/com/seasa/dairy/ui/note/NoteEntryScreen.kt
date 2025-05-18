@@ -210,6 +210,13 @@ fun DatePicker(
                 onValueChange(noteDetail.copy(date = datePickerState.selectedDateMillis?.let { millis ->
                     SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date(millis)).toInt()
                 } ?: 0))
+                date.value = String.format(
+                    Locale.US,
+                    "%04d-%02d-%02d",
+                    noteDetail.date / 10000,
+                    (noteDetail.date / 100) % 100,
+                    noteDetail.date % 100
+                )
             }
         }
     }
