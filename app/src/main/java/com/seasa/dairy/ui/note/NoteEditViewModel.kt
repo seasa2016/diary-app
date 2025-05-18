@@ -50,7 +50,7 @@ class NoteEditViewModel(
             noteUiState = notesRepository.getNoteStream(noteId)
                 .filterNotNull()
                 .first()
-                .toNoteUiState(true)
+                .toNoteUiState(true).copy(isLoading = false)
 
             Log.d("Info", String.format("edit date: %d", noteUiState.noteDetail.date))
         }
@@ -58,7 +58,7 @@ class NoteEditViewModel(
 
     fun updateUiState(noteDetail: NoteDetail) {
         noteUiState =
-            NoteUiState(noteDetail = noteDetail, isEntryValid = true)
+            NoteUiState(noteDetail = noteDetail, isEntryValid = true, isLoading = false)
     }
 
     suspend fun updateNote() {

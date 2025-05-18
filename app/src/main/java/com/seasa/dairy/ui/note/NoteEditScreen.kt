@@ -16,9 +16,11 @@
 
 package com.seasa.dairy.ui.note
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seasa.dairy.DairyTopAppBar
 import com.seasa.dairy.R
@@ -53,34 +57,47 @@ fun NoteEditScreen(
     viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
-    Scaffold(
-        topBar = {
-            DairyTopAppBar(
-                title = stringResource(NoteEditDestination.titleRes),
-                canNavigateBack = true,
-                navigateUp = onNavigateUp
-            )
-        },
-        modifier = modifier
-    ) { innerPadding ->
-        NoteEntryBody(
-            noteUiState = viewModel.noteUiState,
-            onNoteValueChange = viewModel::updateUiState,
-            onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.updateNote()
-                    navigateBack()
-                } },
-            dateSelectEnabled = false,
-            modifier = Modifier
-                .padding(
-                    start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
-                    end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
-                    top = innerPadding.calculateTopPadding()
+    if(viewModel.noteUiState.isLoading){
+        LoadingScreen()
+    } else {
+        Scaffold(
+            topBar = {
+                DairyTopAppBar(
+                    title = stringResource(NoteEditDestination.titleRes),
+                    canNavigateBack = true,
+                    navigateUp = onNavigateUp
                 )
-                .verticalScroll(rememberScrollState())
-        )
+            },
+            modifier = modifier
+        ) { innerPadding ->
+            NoteEntryBody(
+                noteUiState = viewModel.noteUiState,
+                onNoteValueChange = viewModel::updateUiState,
+                onSaveClick = {
+                    coroutineScope.launch {
+                        viewModel.updateNote()
+                        navigateBack()
+                    } },
+                dateSelectEnabled = false,
+                modifier = Modifier
+                    .padding(
+                        start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                        end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                        top = innerPadding.calculateTopPadding()
+                    )
+                    .verticalScroll(rememberScrollState())
+            )
+        }
     }
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(R.string.loading)
+    )
 }
 
 @Preview(showBackground = true)

@@ -16,7 +16,6 @@
 
 package com.seasa.dairy.ui.note
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -25,18 +24,18 @@ import com.seasa.dairy.data.Note
 import com.seasa.dairy.data.NotesRepository
 
 /**
- * ViewModel to validate and insert items in the Room database.
+ * ViewModel to validate and insert notes in the Room database.
  */
 class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewModel() {
 
     /**
-     * Holds current item ui state
+     * Holds current note ui state
      */
     var noteUiState by mutableStateOf(NoteUiState())
         private set
 
     /**
-     * Updates the [itemUiState] with the value provided in the argument. This method also triggers
+     * Updates the [noteUiState] with the value provided in the argument. This method also triggers
      * a validation for input values.
      */
     fun updateUiState(noteDetail: NoteDetail) {
@@ -48,43 +47,7 @@ class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewMod
         if (uiState.title.isEmpty()){
             return false
         }
-        return with(uiState) {
-            val year: Int = date / 10000
-            val month: Int = (date / 100) % 100
-            val day: Int = date % 100
-
-            Log.d("Info", String.format("year: %d, month: %d, day: %d", year, month, day))
-            if (year == 0 || month == 0 || day == 0) {
-                return false
-            } else {
-                when (month) {
-                    1 -> day <= 31
-                    2 -> {
-                        if (year % 400 == 0) {
-                            return day <= 29
-                        } else if (year % 100 == 0) {
-                            return day <= 28
-                        } else if (year % 4 == 0) {
-                            return day <= 29
-                        } else {
-                            day <= 28
-                        }
-                    }
-
-                    3 -> day <= 31
-                    4 -> day <= 30
-                    5 -> day <= 31
-                    6 -> day <= 30
-                    7 -> day <= 31
-                    8 -> day <= 31
-                    9 -> day <= 30
-                    10 -> day <= 31
-                    11 -> day <= 30
-                    12 -> day <= 31
-                    else -> false
-                }
-            }
-        }
+        return uiState.date.isValidDate()
     }
 
     suspend fun saveNote() {
@@ -95,11 +58,12 @@ class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewMod
 }
 
 /**
- * Represents Ui State for an Item.
+ * Represents Ui State for an Note.
  */
 data class NoteUiState(
     val noteDetail: NoteDetail = NoteDetail(),
-    val isEntryValid: Boolean = false
+    val isEntryValid: Boolean = false,
+    val isLoading: Boolean = true
 )
 
 data class NoteDetail(
@@ -110,9 +74,7 @@ data class NoteDetail(
 )
 
 /**
- * Extension function to convert [ItemDetails] to [Item]. If the value of [ItemDetails.price] is
- * not a valid [Double], then the price will be set to 0.0. Similarly if the value of
- * [ItemDetails.quantity] is not a valid [Int], then the quantity will be set to 0
+ * Extension function to convert [NoteDetails] to [Note].
  */
 fun NoteDetail.toNote(): Note = Note(
     id = id,
@@ -121,8 +83,46 @@ fun NoteDetail.toNote(): Note = Note(
     content = content
 )
 
+fun Int.isValidDate():Boolean  {
+    val year: Int = this / 10000
+    val month: Int = (this / 100) % 100
+    val day: Int = this % 100
+
+    android.util.Log.d("Info", String.format("year: %d, month: %d, day: %d", year, month, day))
+    if (year == 0 || month == 0 || day == 0) {
+        return false
+    } else {
+        return when (month) {
+            1 -> day <= 31
+            2 -> {
+                if (year % 400 == 0) {
+                    return day <= 29
+                } else if (year % 100 == 0) {
+                    return day <= 28
+                } else if (year % 4 == 0) {
+                    return day <= 29
+                } else {
+                    day <= 28
+                }
+            }
+
+            3 -> day <= 31
+            4 -> day <= 30
+            5 -> day <= 31
+            6 -> day <= 30
+            7 -> day <= 31
+            8 -> day <= 31
+            9 -> day <= 30
+            10 -> day <= 31
+            11 -> day <= 30
+            12 -> day <= 31
+            else -> false
+        }
+    }
+}
+
 /**
- * Extension function to convert [Item] to [ItemUiState]
+ * Extension function to convert [Note] to [NoteUiState]
  */
 fun Note.toNoteUiState(isEntryValid: Boolean = false): NoteUiState = NoteUiState(
     noteDetail = this.toNoteDetail(),
@@ -130,11 +130,11 @@ fun Note.toNoteUiState(isEntryValid: Boolean = false): NoteUiState = NoteUiState
 )
 
 /**
- * Extension function to convert [Item] to [ItemDetails]
+ * Extension function to convert [Note] to [NoteDetails]
  */
 fun Note.toNoteDetail(): NoteDetail = NoteDetail(
     id = id,
     date = date,
-    title = title.toString(),
-    content = content.toString(),
+    title = title,
+    content = content,
 )

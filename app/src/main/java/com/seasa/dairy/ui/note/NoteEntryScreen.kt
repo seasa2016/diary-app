@@ -16,9 +16,7 @@
 
 package com.seasa.dairy.ui.note
 
-import android.icu.text.IDNA.Info
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -27,11 +25,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -55,7 +57,6 @@ import com.seasa.dairy.ui.AppViewModelProvider
 import com.seasa.dairy.ui.navigation.NavigationDestination
 import com.seasa.dairy.ui.theme.DairyTheme
 import kotlinx.coroutines.launch
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -147,28 +148,48 @@ fun DatePicker(
     enabled: Boolean = true
 ) {
     val showDialog = remember { mutableStateOf(false) }
-
-    Column {
-        OutlinedTextField(
-            value = String.format(
+    val date = remember {
+        mutableStateOf(
+            String.format(
                 Locale.US,
-                "%4d-%02d-%02d",
+                "%04d-%02d-%02d",
                 noteDetail.date / 10000,
                 (noteDetail.date / 100) % 100,
                 noteDetail.date % 100
-            ),
-            onValueChange = {
+            )
+        )
+    }
 
+    Column {
+        OutlinedTextField(
+            value = date.value,
+            onValueChange = {
+                date.value = it
+
+                try {
+                    val parsedDate = (it.filterNot { it == '-' }).toInt()
+                    if (parsedDate.isValidDate()) {
+                        onValueChange(noteDetail.copy(date = parsedDate))
+                    }
+                } catch (_: java.lang.NumberFormatException) {
+                    Log.d("warning", String.format("date parse error: %s", it))
+                }
             },
-            label = { Text(stringResource(R.string.date)) },
-            readOnly = true,
+            label = { Text(stringResource(R.string.date_with_format)) },
+            trailingIcon = {
+                IconButton(onClick = { showDialog.value = true }) {
+                    Icon(
+                        Icons.Default.DateRange,
+                        contentDescription = stringResource(R.string.choose_date)
+                    )
+                }
+            },
             modifier = Modifier
-                .clickable { showDialog.value = true }
                 .fillMaxWidth(),
-            enabled = !enabled
+            enabled = enabled
         )
         Log.d("Info", String.format("showDialog: %b", showDialog.value))
-        if (showDialog.value) {
+        if (showDialog.value && enabled) {
             DatePickerDialog(
                 onDismissRequest = { showDialog.value = false },
                 confirmButton = {

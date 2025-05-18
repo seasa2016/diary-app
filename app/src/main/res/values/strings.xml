@@ -36,6 +36,9 @@
     <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
     <string name="date">Date</string>
+    <string name="date_with_format">Date(yyyy-MM-dd)</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="choose_date">Choose date</string>
+    <string name="loading">Loading</string>
 </resources>
