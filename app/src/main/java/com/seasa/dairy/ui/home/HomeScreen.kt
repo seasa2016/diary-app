@@ -190,7 +190,7 @@ private fun DairyItem(
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyPreview() {
-    DairyTheme {
+    DairyTheme(darkTheme = true) {
         HomeBody(listOf(
             NoteBrief(1, 20250401, "1"), NoteBrief(2, 20250402, "2"), NoteBrief(3, 20250403, "3")
         ), onItemClick = {})

@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,13 +32,10 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -195,33 +191,18 @@ private fun NoteDeleteButton(
 fun NoteDetails(
     note: Note, modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier, colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(
-                dimensionResource(id = R.dimen.padding_medium)
-            )
-        ) {
-            Text(
-                text = note.content
-            )
-        }
-    }
+    Text(
+        text = note.content,
+        modifier = modifier
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun NoteDetailsScreenPreview() {
-    DairyTheme {
+    DairyTheme(darkTheme = true) {
         NoteDetails(
-            Note(1, 20250401, "title", "content")
+            Note(1, 20250401, "title", "content1")
         )
     }
 }
