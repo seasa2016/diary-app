@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+package com.seasa.diary.ui.setting
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import com.seasa.diary.R
+import com.seasa.diary.ui.navigation.NavigationDestination
+
+object SettingDestination : NavigationDestination {
+    override val route = "setting"
+    override val titleRes = R.string.setting_title
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
+
+/**
+ * Entry route for Setting screen
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingScreen(
+) {
 }
-rootProject.name = "Diary"
-include(":app")

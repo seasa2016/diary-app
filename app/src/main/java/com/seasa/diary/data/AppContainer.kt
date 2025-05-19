@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+package com.seasa.diary.data
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
+import android.content.Context
+
+/**
+ * App container for Dependency injection.
+ */
+interface AppContainer {
+    val notesRepository: NotesRepository
+}
+
+/**
+ * [AppContainer] implementation that provides instance of [OfflineNotesRepository]
+ */
+class AppDataContainer(private val context: Context) : AppContainer {
+    /**
+     * Implementation for [NotesRepository]
+     */
+    override val notesRepository: NotesRepository by lazy {
+        OfflineNotesRepository(DiaryDatabase.getDatabase(context).noteDao())
     }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "Diary"
-include(":app")

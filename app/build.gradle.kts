@@ -25,7 +25,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.seasa.dairy"
+        applicationId = "com.seasa.diary"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -61,7 +61,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace = "com.seasa.dairy"
+    namespace = "com.seasa.diary"
 }
 
 dependencies {

@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+package com.seasa.diary.data
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
+import kotlinx.coroutines.flow.Flow
+
+class OfflineNotesRepository(private val noteDao: NoteDao) : NotesRepository {
+    override fun getAllNoteBriefs(): Flow<List<NoteBrief>> = noteDao.getAllNoteBriefs()
+
+    override fun getNoteStream(id: Int): Flow<Note?> = noteDao.getNote(id)
+
+    override suspend fun insertNote(note: Note) = noteDao.insert(note)
+
+    override suspend fun deleteNote(note: Note) = noteDao.delete(note)
+
+    override suspend fun updateNote(note: Note) = noteDao.update(note)
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "Diary"
-include(":app")

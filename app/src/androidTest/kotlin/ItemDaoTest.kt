@@ -1,13 +1,13 @@
-package com.seasa.dairy
+package com.seasa.diary
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.seasa.dairy.data.DairyDatabase
-import com.seasa.dairy.data.Note
-import com.seasa.dairy.data.NoteBrief
-import com.seasa.dairy.data.NoteDao
+import com.seasa.diary.data.DiaryDatabase
+import com.seasa.diary.data.Note
+import com.seasa.diary.data.NoteBrief
+import com.seasa.diary.data.NoteDao
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -26,24 +26,24 @@ private var noteBrief2 = NoteBrief(2, 20250102, "title2")
 @RunWith(AndroidJUnit4::class)
 class NoteDaoTest {
     private lateinit var noteDao: NoteDao
-    private lateinit var dairyDatabase: DairyDatabase
+    private lateinit var diaryDatabase: DiaryDatabase
 
     @Before
     fun createDb() {
         val context: Context = ApplicationProvider.getApplicationContext()
         // Using an in-memory database because the information stored here disappears when the
         // process is killed.
-        dairyDatabase = Room.inMemoryDatabaseBuilder(context, DairyDatabase::class.java)
+        diaryDatabase = Room.inMemoryDatabaseBuilder(context, DiaryDatabase::class.java)
             // Allowing main thread queries, just for testing.
             .allowMainThreadQueries()
             .build()
-        noteDao = dairyDatabase.noteDao()
+        noteDao = diaryDatabase.noteDao()
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        dairyDatabase.close()
+        diaryDatabase.close()
     }
 
     private suspend fun addOneNoteToDb() {

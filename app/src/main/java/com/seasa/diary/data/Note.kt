@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+package com.seasa.diary.data
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "Diary"
-include(":app")
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+
+/**
+ * Entity data class represents a single row in the database.
+ */
+@Entity(tableName = "notes")
+data class Note(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val date: Int,
+    val title: String,
+    val content: String
+)

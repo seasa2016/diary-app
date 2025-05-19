@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+package com.seasa.diary
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
+import android.app.Application
+import com.seasa.diary.data.AppContainer
+import com.seasa.diary.data.AppDataContainer
+
+class DiaryApplication : Application() {
+
+    /**
+     * AppContainer instance used by the rest of classes to obtain dependencies
+     */
+    lateinit var container: AppContainer
+
+    override fun onCreate() {
+        super.onCreate()
+        container = AppDataContainer(this)
     }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "Diary"
-include(":app")

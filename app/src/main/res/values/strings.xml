@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 <resources>
-    <string name="app_name">Dairy</string>
+    <string name="app_name">Diary</string>
     <string name="setting_title">Setting</string>
     <string name="attention">Attention</string>
     <string name="back_button">Back</string>
