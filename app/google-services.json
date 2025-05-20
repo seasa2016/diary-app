@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "606059912359",
+    "project_id": "dairy-app-460212",
+    "storage_bucket": "dairy-app-460212.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606059912359:android:ca8c525b91046ea1360f82",
+        "android_client_info": {
+          "package_name": "com.seasa.diary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcyoUlVuOTLCRRfsyEsxurz2HpqCS8YgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

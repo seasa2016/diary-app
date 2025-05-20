@@ -17,17 +17,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     extra.apply {
-        set("room_version", "2.6.0")
+        set("room_version", "2.7.1")
+    }
+    dependencies {
+        // ... 其他 dependencies
+        // 添加 Google Services Gradle Plugin
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 
 plugins {
-    id("com.android.application") version "8.8.0" apply false
-    id("com.android.library") version "8.8.0" apply false
-    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" apply false
+    id("com.android.application") version "8.8.2" apply false
+    id("com.android.library") version "8.8.2" apply false
+    id("org.jetbrains.kotlin.android") version "2.1.20" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.20" apply false
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory.get().asFile)
 }
