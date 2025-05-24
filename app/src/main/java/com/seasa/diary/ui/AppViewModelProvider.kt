@@ -27,6 +27,7 @@ import com.seasa.diary.ui.home.HomeViewModel
 import com.seasa.diary.ui.note.NoteEditViewModel
 import com.seasa.diary.ui.note.NoteEntryViewModel
 import com.seasa.diary.ui.note.NoteDetailsViewModel
+import com.seasa.diary.ui.setting.BackupViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Diary app
@@ -54,6 +55,10 @@ object AppViewModelProvider {
         // Initializer for HomeViewModel
         initializer {
             HomeViewModel(diaryApplication().container.notesRepository)
+        }
+        // Initializer for SignInViewModel
+        initializer {
+            BackupViewModel()
         }
     }
 }

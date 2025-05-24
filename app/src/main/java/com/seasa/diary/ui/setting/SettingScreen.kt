@@ -16,8 +16,25 @@
 
 package com.seasa.diary.ui.setting
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import com.seasa.diary.DiaryTopAppBar
 import com.seasa.diary.R
 import com.seasa.diary.ui.navigation.NavigationDestination
 
@@ -32,5 +49,47 @@ object SettingDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
+    navigateToSignIn: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            DiaryTopAppBar(
+                title = stringResource(SettingDestination.titleRes),
+                canNavigateBack = false,
+                scrollBehavior = scrollBehavior
+            )
+        },
+    ) { innerPadding ->
+        SettingBody(
+            navigateToSignIn = navigateToSignIn,
+            modifier = modifier.fillMaxSize(),
+            contentPadding = innerPadding,
+        )
+    }
+}
+
+@Composable
+private fun SettingBody(
+    navigateToSignIn: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
+    ) {
+        Spacer(modifier = Modifier.padding(contentPadding))
+        SettingsListItem(
+            icon = ImageVector.vectorResource(id= R.drawable.database_svgrepo_com),
+            iconTint = Color(0x00FF9800),
+            text = "Backup",
+            onClick = navigateToSignIn,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }

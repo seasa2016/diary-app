@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.seasa.diary"
-        minSdk = 24
+        minSdk = 34
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -61,14 +61,21 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
         }
     }
     namespace = "com.seasa.diary"
 }
 
+configurations.all {
+    resolutionStrategy {
+        force( "com.google.guava:guava:31.0.1-android")
+    }
+}
+
 dependencies {
     // Import the Compose BOM
-    implementation(platform("androidx.compose:compose-bom:2025.05.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.05.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
@@ -80,12 +87,19 @@ dependencies {
 
     //Room
     implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     ksp("androidx.room:room-compiler:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")
 
     // 添加 Google Drive API 依賴
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.google.android.gms:play-services-drive:17.0.0")
+    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
+    implementation("androidx.credentials:credentials:<latest version>")
+    implementation("androidx.credentials:credentials-play-services-auth:<latest version>")
+    implementation("com.google.android.libraries.identity.googleid:googleid:<latest version>")
+    implementation("com.google.http-client:google-http-client-gson:1.26.0")
+    implementation ("com.google.api-client:google-api-client-android:1.32.1")
 
     // Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

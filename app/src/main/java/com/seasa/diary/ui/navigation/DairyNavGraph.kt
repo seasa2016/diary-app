@@ -16,8 +16,10 @@
 
 package com.seasa.diary.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,6 +33,9 @@ import com.seasa.diary.ui.note.NoteEditDestination
 import com.seasa.diary.ui.note.NoteEditScreen
 import com.seasa.diary.ui.note.NoteEntryDestination
 import com.seasa.diary.ui.note.NoteEntryScreen
+import com.seasa.diary.ui.setting.BackupDestination
+import com.seasa.diary.ui.setting.BackupScreen
+import com.seasa.diary.ui.setting.BackupViewModel
 import com.seasa.diary.ui.setting.SettingDestination
 import com.seasa.diary.ui.setting.SettingScreen
 
@@ -42,6 +47,8 @@ fun DiaryNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val backupViewModel: BackupViewModel = viewModel()
+
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
@@ -87,6 +94,18 @@ fun DiaryNavHost(
             route = SettingDestination.route,
         ) {
             SettingScreen(
+                navigateToSignIn = { navController.navigate(BackupDestination.route) },
+            )
+        }
+        composable(
+            route = BackupDestination.route,
+        ) {
+            BackupScreen(
+                backupViewModel=backupViewModel,
+                onSignInClick = {
+                    backupViewModel.handleGoogleSignIn(navController.context)
+                    Log.d("BackupScreen", "onSignInClick triggered")
+                }
             )
         }
     }
