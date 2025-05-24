@@ -25,6 +25,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.seasa.diary.ui.AppViewModelProvider
 import com.seasa.diary.ui.home.HomeDestination
 import com.seasa.diary.ui.home.HomeScreen
 import com.seasa.diary.ui.note.NoteDetailsDestination
@@ -47,7 +48,7 @@ fun DiaryNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val backupViewModel: BackupViewModel = viewModel()
+    val backupViewModel: BackupViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
     NavHost(
         navController = navController,

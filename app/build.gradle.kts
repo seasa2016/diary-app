@@ -92,7 +92,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")
 
-    // 添加 Google Drive API 依賴
+    // Google Drive API
     implementation("com.google.android.gms:play-services-drive:17.0.0")
     implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
     implementation("androidx.credentials:credentials:<latest version>")
@@ -100,6 +100,10 @@ dependencies {
     implementation("com.google.android.libraries.identity.googleid:googleid:<latest version>")
     implementation("com.google.http-client:google-http-client-gson:1.26.0")
     implementation ("com.google.api-client:google-api-client-android:1.32.1")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("androidx.datastore:datastore-core:1.1.7")
 
     // Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

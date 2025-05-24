@@ -23,6 +23,7 @@ import android.content.Context
  */
 interface AppContainer {
     val notesRepository: NotesRepository
+    val loginRepository: LoginRepository
 }
 
 /**
@@ -34,5 +35,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
      */
     override val notesRepository: NotesRepository by lazy {
         OfflineNotesRepository(DiaryDatabase.getDatabase(context).noteDao())
+    }
+    override val loginRepository: LoginRepository by lazy {
+        LoginRepository(context)
     }
 }

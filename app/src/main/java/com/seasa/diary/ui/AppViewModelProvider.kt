@@ -58,7 +58,7 @@ object AppViewModelProvider {
         }
         // Initializer for SignInViewModel
         initializer {
-            BackupViewModel()
+            BackupViewModel(diaryApplication().container.loginRepository)
         }
     }
 }
