@@ -98,8 +98,13 @@ dependencies {
     implementation("androidx.credentials:credentials:<latest version>")
     implementation("androidx.credentials:credentials-play-services-auth:<latest version>")
     implementation("com.google.android.libraries.identity.googleid:googleid:<latest version>")
-    implementation("com.google.http-client:google-http-client-gson:1.26.0")
-    implementation ("com.google.api-client:google-api-client-android:1.32.1")
+    implementation("com.google.http-client:google-http-client-gson:1.42.3")
+    implementation("com.google.api-client:google-api-client-android:1.32.1")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
+
+    // Layout
+    implementation("androidx.compose.material3:material3:1.3.2")
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")

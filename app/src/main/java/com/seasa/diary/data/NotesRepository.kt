@@ -46,4 +46,7 @@ interface NotesRepository {
      * Update note in the data source
      */
     suspend fun updateNote(note: Note)
+
+    suspend fun exportDatabaseToJson(): String
+    suspend fun importDatabaseFromJson(jsonData: String)
 }

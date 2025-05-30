@@ -20,6 +20,7 @@ class LoginRepository(private val context: Context) {
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         val USER_ID = stringPreferencesKey("user_id")
         val USER_DISPLAY_NAME = stringPreferencesKey("user_display_name")
+        val ID_TOKEN = stringPreferencesKey("id_token")
     }
 
     val isLoggedIn: Flow<Boolean> = context.dataStore.data
@@ -37,11 +38,17 @@ class LoginRepository(private val context: Context) {
             preferences[PreferencesKeys.USER_DISPLAY_NAME]
         }
 
-    suspend fun saveLoginState(isLoggedIn: Boolean, userId: String?, displayName: String?) {
+    val idToken: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.ID_TOKEN]
+        }
+
+    suspend fun saveLoginState(isLoggedIn: Boolean, userId: String?, displayName: String?, idToken: String?) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_LOGGED_IN] = isLoggedIn
             preferences[PreferencesKeys.USER_ID] = userId ?: "" // 如果為 null 存儲空字串
             preferences[PreferencesKeys.USER_DISPLAY_NAME] = displayName ?: ""
+            preferences[PreferencesKeys.ID_TOKEN] = idToken ?: ""
         }
     }
 

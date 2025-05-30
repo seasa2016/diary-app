@@ -24,6 +24,7 @@ import android.content.Context
 interface AppContainer {
     val notesRepository: NotesRepository
     val loginRepository: LoginRepository
+    val googleDriveRepository: GoogleDriveRepository
 }
 
 /**
@@ -38,5 +39,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
     override val loginRepository: LoginRepository by lazy {
         LoginRepository(context)
+    }
+    override val googleDriveRepository: GoogleDriveRepository by lazy {
+        GoogleDriveRepository(context)
     }
 }

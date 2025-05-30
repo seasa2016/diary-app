@@ -3,7 +3,7 @@ Diary app
 
 TODO:
 - [x] side panel for setting 
-  - [] remote sync with google drive
+  - [x] remote sync with google drive
   - [] font size setting
   - [] In app password lock
 - [] improve brief by adding month drop list
