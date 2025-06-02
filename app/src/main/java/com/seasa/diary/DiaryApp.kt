@@ -48,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import com.seasa.diary.R.string
 import com.seasa.diary.ui.home.HomeDestination
 import com.seasa.diary.ui.navigation.DiaryNavHost
+import com.seasa.diary.ui.setting.FontViewModel
 import com.seasa.diary.ui.setting.SettingDestination
 import kotlinx.coroutines.launch
 
@@ -55,7 +56,10 @@ import kotlinx.coroutines.launch
  * Top level composable that represents screens for the application.
  */
 @Composable
-fun DiaryApp(navController: NavHostController = rememberNavController()) {
+fun DiaryApp(
+    navController: NavHostController = rememberNavController(),
+    fontViewModel: FontViewModel
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed) // 記住 Drawer 狀態
     val scope = rememberCoroutineScope() // 記住 CoroutineScope 來執行非同步操作 (開/關 Drawer)
 
@@ -98,13 +102,14 @@ fun DiaryApp(navController: NavHostController = rememberNavController()) {
             }
         }
     ) {
-        DiaryNavHost(navController = navController)
+        DiaryNavHost(navController = navController, fontViewModel = fontViewModel)
     }
 }
 
 /**
  * App bar to display title and conditionally display the back navigation.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiaryTopAppBar(
     title: String,

@@ -25,6 +25,7 @@ interface AppContainer {
     val notesRepository: NotesRepository
     val loginRepository: LoginRepository
     val googleDriveRepository: GoogleDriveRepository
+    val fontRepository: FontRepository
 }
 
 /**
@@ -42,5 +43,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
     override val googleDriveRepository: GoogleDriveRepository by lazy {
         GoogleDriveRepository(context)
+    }
+    override val fontRepository: FontRepository by lazy {
+        FontRepository(context)
     }
 }

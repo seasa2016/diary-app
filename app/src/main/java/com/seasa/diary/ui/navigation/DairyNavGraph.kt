@@ -37,6 +37,9 @@ import com.seasa.diary.ui.note.NoteEntryScreen
 import com.seasa.diary.ui.setting.BackupDestination
 import com.seasa.diary.ui.setting.BackupScreen
 import com.seasa.diary.ui.setting.BackupViewModel
+import com.seasa.diary.ui.setting.FontDestination
+import com.seasa.diary.ui.setting.FontScreen
+import com.seasa.diary.ui.setting.FontViewModel
 import com.seasa.diary.ui.setting.SettingDestination
 import com.seasa.diary.ui.setting.SettingScreen
 
@@ -46,6 +49,7 @@ import com.seasa.diary.ui.setting.SettingScreen
 @Composable
 fun DiaryNavHost(
     navController: NavHostController,
+    fontViewModel: FontViewModel,
     modifier: Modifier = Modifier,
 ) {
     val backupViewModel: BackupViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -96,6 +100,7 @@ fun DiaryNavHost(
         ) {
             SettingScreen(
                 navigateToSignIn = { navController.navigate(BackupDestination.route) },
+                navigateToFont = { navController.navigate(FontDestination.route) },
             )
         }
         composable(
@@ -107,6 +112,13 @@ fun DiaryNavHost(
                     backupViewModel.handleGoogleSignIn(navController.context)
                     Log.d("BackupScreen", "onSignInClick triggered")
                 }
+            )
+        }
+        composable(
+            route = FontDestination.route,
+        ) {
+            FontScreen(
+                fontViewModel=fontViewModel,
             )
         }
     }

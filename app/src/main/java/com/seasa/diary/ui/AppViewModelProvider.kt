@@ -24,10 +24,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.seasa.diary.DiaryApplication
 import com.seasa.diary.ui.home.HomeViewModel
+import com.seasa.diary.ui.note.NoteDetailsViewModel
 import com.seasa.diary.ui.note.NoteEditViewModel
 import com.seasa.diary.ui.note.NoteEntryViewModel
-import com.seasa.diary.ui.note.NoteDetailsViewModel
 import com.seasa.diary.ui.setting.BackupViewModel
+import com.seasa.diary.ui.setting.FontViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Diary app
@@ -62,6 +63,12 @@ object AppViewModelProvider {
                 diaryApplication().container.loginRepository,
                 diaryApplication().container.googleDriveRepository,
                 diaryApplication().container.notesRepository
+            )
+        }
+        // Initializer for FontViewModel
+        initializer {
+            FontViewModel(
+                diaryApplication().container.fontRepository,
             )
         }
     }

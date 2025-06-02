@@ -50,6 +50,7 @@ object SettingDestination : NavigationDestination {
 @Composable
 fun SettingScreen(
     navigateToSignIn: () -> Unit,
+    navigateToFont: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -67,6 +68,7 @@ fun SettingScreen(
     ) { innerPadding ->
         SettingBody(
             navigateToSignIn = navigateToSignIn,
+            navigateToFont = navigateToFont,
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding,
         )
@@ -76,6 +78,7 @@ fun SettingScreen(
 @Composable
 private fun SettingBody(
     navigateToSignIn: () -> Unit,
+    navigateToFont: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -89,6 +92,13 @@ private fun SettingBody(
             iconTint = Color(0x00FF9800),
             text = "Backup",
             onClick = navigateToSignIn,
+            modifier = Modifier.fillMaxWidth()
+        )
+        SettingsListItem(
+            icon = ImageVector.vectorResource(id= R.drawable.font),
+            iconTint = Color(0x00FF9800),
+            text = "Font",
+            onClick = navigateToFont,
             modifier = Modifier.fillMaxWidth()
         )
     }
