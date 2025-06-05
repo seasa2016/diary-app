@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.seasa.diary.ui.note
 
 import android.util.Log
@@ -21,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -83,7 +69,7 @@ fun NoteEntryScreen(
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp
             )
-        }
+        },
     ) { innerPadding ->
         NoteEntryBody(
             noteUiState = viewModel.noteUiState,
@@ -101,7 +87,6 @@ fun NoteEntryScreen(
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                     top = innerPadding.calculateTopPadding()
                 )
-                .verticalScroll(rememberScrollState())
                 .fillMaxWidth()
         )
     }
@@ -117,23 +102,41 @@ fun NoteEntryBody(
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
-        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)).fillMaxHeight()
     ) {
         DatePicker(
             noteDetail = noteUiState.noteDetail,
             onValueChange = onNoteValueChange,
             enabled = dateSelectEnabled
         )
-        NoteInputForm(
-            noteDetail = noteUiState.noteDetail,
-            onValueChange = onNoteValueChange,
-            modifier = Modifier.fillMaxWidth()
+        OutlinedTextField(
+            value = noteUiState.noteDetail.title,
+            onValueChange = { onNoteValueChange(noteUiState.noteDetail.copy(title = it)) },
+            label = { Text(stringResource(R.string.note_title)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        OutlinedTextField(
+            value = noteUiState.noteDetail.content,
+            onValueChange = { onNoteValueChange(noteUiState.noteDetail.copy(content = it)) },
+            label = { Text(stringResource(R.string.note_content)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
         )
         Button(
             onClick = onSaveClick,
             enabled = noteUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
+                .navigationBarsPadding()
         ) {
             Text(text = stringResource(R.string.save_action))
         }
@@ -163,16 +166,16 @@ fun DatePicker(
     Column {
         OutlinedTextField(
             value = date.value,
-            onValueChange = {
-                date.value = it
+            onValueChange = { newValue ->
+                date.value = newValue
 
                 try {
-                    val parsedDate = (it.filterNot { it == '-' }).toInt()
+                    val parsedDate = (newValue.filterNot { it == '-' }).toInt()
                     if (parsedDate.isValidDate()) {
                         onValueChange(noteDetail.copy(date = parsedDate))
                     }
                 } catch (_: java.lang.NumberFormatException) {
-                    Log.d("warning", String.format("date parse error: %s", it))
+                    Log.d("warning", String.format("date parse error: %s", newValue))
                 }
             },
             label = { Text(stringResource(R.string.date_with_format)) },
@@ -219,44 +222,6 @@ fun DatePicker(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun NoteInputForm(
-    noteDetail: NoteDetail,
-    modifier: Modifier = Modifier,
-    onValueChange: (NoteDetail) -> Unit = {},
-    enabled: Boolean = true
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
-    ) {
-        OutlinedTextField(
-            value = noteDetail.title,
-            onValueChange = { onValueChange(noteDetail.copy(title = it)) },
-            label = { Text(stringResource(R.string.note_title)) },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled
-        )
-        OutlinedTextField(
-            value = noteDetail.content,
-            onValueChange = { onValueChange(noteDetail.copy(content = it)) },
-            label = { Text(stringResource(R.string.note_content)) },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled
-        )
     }
 }
 
