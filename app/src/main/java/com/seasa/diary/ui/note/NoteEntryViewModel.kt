@@ -16,23 +16,29 @@
 
 package com.seasa.diary.ui.note
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.seasa.diary.data.Note
 import com.seasa.diary.data.NotesRepository
+import java.util.UUID
 
 /**
  * ViewModel to validate and insert notes in the Room database.
  */
-class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewModel() {
+open class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewModel() {
 
     /**
      * Holds current note ui state
      */
-    var noteUiState by mutableStateOf(NoteUiState())
-        private set
+    open var noteUiState by mutableStateOf(NoteUiState())
+        protected set
 
     /**
      * Updates the [noteUiState] with the value provided in the argument. This method also triggers
@@ -40,7 +46,32 @@ class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewMod
      */
     fun updateUiState(noteDetail: NoteDetail) {
         noteUiState =
-            NoteUiState(noteDetail = noteDetail, isEntryValid = validateInput(noteDetail))
+            NoteUiState(noteDetail = noteDetail, isEntryValid = validateInput(noteDetail), isLoading = false)
+    }
+
+
+    fun insertImageLabel(
+        currentContent: TextFieldValue,
+        imageUri: Uri
+    ) {
+        val imageLabel = "[IMAGE_${UUID.randomUUID()}]"
+
+        val cursorPosition = currentContent.selection.start
+        val text = currentContent.text
+        val newText = text.substring(0, cursorPosition) + imageLabel + text.substring(cursorPosition)
+        val newCursorPosition = cursorPosition + imageLabel.length
+        val newTextFieldValue = TextFieldValue(text = newText, selection = TextRange(newCursorPosition))
+
+        // Update the UI state with the new content (as string) and the image map
+        val updatedImageMap = noteUiState.noteDetail.imageUriMap.toMutableMap()
+        updatedImageMap[imageLabel] = imageUri.toUriWrapper()
+
+        updateUiState(
+            noteUiState.noteDetail.copy(
+                content = newTextFieldValue,
+                imageUriMap = updatedImageMap
+            )
+        )
     }
 
     private fun validateInput(uiState: NoteDetail = noteUiState.noteDetail): Boolean {
@@ -50,7 +81,7 @@ class NoteEntryViewModel(private val notesRepository: NotesRepository) : ViewMod
         return uiState.date.isValidDate()
     }
 
-    suspend fun saveNote() {
+    open suspend fun saveNote() {
         if (validateInput()) {
             notesRepository.insertNote(noteUiState.noteDetail.toNote())
         }
@@ -70,18 +101,35 @@ data class NoteDetail(
     val id: Int = 0,
     val date: Int = 0,
     val title: String = "",
-    val content: String = "",
+    val content: TextFieldValue = TextFieldValue(""), // After
+    val imageUriMap: Map<String, UriWrapper> = mapOf()
 )
+
+data class UriWrapper(val uriString: String) {
+   fun toUri(): Uri = Uri.parse(uriString)
+}
+fun Uri.toUriWrapper() = UriWrapper(this.toString())
 
 /**
  * Extension function to convert [NoteDetails] to [Note].
  */
-fun NoteDetail.toNote(): Note = Note(
-    id = id,
-    date = date,
-    title = title,
-    content = content
-)
+fun NoteDetail.toNote(): Note {
+    val gson = Gson()
+    // Convert Map<String, UriWrapper> to JSON String
+    val imageUrisJsonString = if (imageUriMap.isNotEmpty()) {
+        gson.toJson(imageUriMap)
+    } else {
+        null // Store null if the map is empty
+    }
+
+    return Note(
+        id = id,
+        date = date,
+        title = title,
+        content = content.text, // Ensure this matches the type in your Note entity
+        imageUrisJson = imageUrisJsonString
+    )
+}
 
 fun Int.isValidDate():Boolean  {
     val year: Int = this / 10000
@@ -132,9 +180,27 @@ fun Note.toNoteUiState(isEntryValid: Boolean = false): NoteUiState = NoteUiState
 /**
  * Extension function to convert [Note] to [NoteDetails]
  */
-fun Note.toNoteDetail(): NoteDetail = NoteDetail(
-    id = id,
-    date = date,
-    title = title,
-    content = content,
-)
+fun Note.toNoteDetail(): NoteDetail {
+    val gson = Gson()
+    val imageMap: Map<String, UriWrapper> = if (!imageUrisJson.isNullOrBlank()) {
+        try {
+            // Define the type for deserialization
+            val type = object : TypeToken<Map<String, UriWrapper>>() {}.type
+            gson.fromJson(imageUrisJson, type)
+        } catch (e: Exception) {
+            // Handle potential JSON parsing errors, e.g., log and return empty map
+            android.util.Log.e("NoteMapping", "Error parsing imageUrisJson: $imageUrisJson", e)
+            emptyMap()
+        }
+    } else {
+        emptyMap()
+    }
+
+    return NoteDetail(
+        id = id,
+        date = date,
+        title = title,
+        content = TextFieldValue(content), // Ensure this matches the type in your NoteDetail
+        imageUriMap = imageMap
+    )
+}

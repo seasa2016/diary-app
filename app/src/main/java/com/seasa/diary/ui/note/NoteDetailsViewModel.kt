@@ -44,7 +44,7 @@ class NoteDetailsViewModel(
         notesRepository.getNoteStream(noteId)
             .filterNotNull()
             .map {
-                NoteUiState(isEntryValid = true, noteDetail = it.toNoteDetail())
+                NoteUiState(isEntryValid = true, noteDetail = it.toNoteDetail(), isLoading = false)
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),

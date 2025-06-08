@@ -29,5 +29,6 @@ data class Note(
     val id: Int = 0,
     val date: Int,
     val title: String,
-    val content: String
+    val content: String,
+    val imageUrisJson: String? = null,
 )

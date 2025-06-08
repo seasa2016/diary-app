@@ -17,11 +17,7 @@
 package com.seasa.diary.ui.note
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seasa.diary.data.NotesRepository
 import kotlinx.coroutines.flow.filterNotNull
@@ -34,14 +30,7 @@ import kotlinx.coroutines.launch
 class NoteEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository
-) : ViewModel() {
-
-    /**
-     * Holds current note ui state
-     */
-    var noteUiState by mutableStateOf(NoteUiState())
-        private set
-
+) : NoteEntryViewModel(notesRepository) {
     private val noteId: Int = checkNotNull(savedStateHandle[NoteEditDestination.noteIdArg])
 
 
@@ -56,12 +45,7 @@ class NoteEditViewModel(
         }
     }
 
-    fun updateUiState(noteDetail: NoteDetail) {
-        noteUiState =
-            NoteUiState(noteDetail = noteDetail, isEntryValid = true, isLoading = false)
-    }
-
-    suspend fun updateNote() {
+    override suspend fun saveNote()  {
         notesRepository.updateNote(noteUiState.noteDetail.toNote())
     }
 }

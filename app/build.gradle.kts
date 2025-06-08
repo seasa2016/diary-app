@@ -62,6 +62,7 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/DEPENDENCIES"
+            excludes += "mozilla/public-suffix-list.txt"
         }
     }
     namespace = "com.seasa.diary"
@@ -75,20 +76,22 @@ configurations.all {
 
 dependencies {
     // Import the Compose BOM
-    implementation(platform("androidx.compose:compose-bom:2025.05.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.06.00"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
     implementation("androidx.navigation:navigation-compose:2.9.0")
 
     //Room
     implementation("androidx.room:room-runtime:2.7.1")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.4")
+    implementation("com.android.volley:volley:1.2.1")
     ksp("androidx.room:room-compiler:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")
 
@@ -109,6 +112,9 @@ dependencies {
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.datastore:datastore-core:1.1.7")
+
+    // Image
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
