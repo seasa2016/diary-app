@@ -38,7 +38,7 @@ class BackupViewModel(
     val loginState: StateFlow<LoginState> = _loginState
 
     private val WEB_CLIENT_ID =
-        "606059912359-3hhu9qe4e6m76bt9dk7ifgbpb7askt81.apps.googleusercontent.com"
+        "606059912359-n3onbfuhaqf7hl8cg5p6i9l35kp372b0.apps.googleusercontent.com"
 
     sealed class LoginState {
         data object Idle : LoginState()
